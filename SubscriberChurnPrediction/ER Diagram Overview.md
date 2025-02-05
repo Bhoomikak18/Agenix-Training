@@ -75,7 +75,7 @@ The logical model defines the attributes for each entity and the foreign keys wi
 - Content_Type  
 
 ### **ActivityLogs**  
-- `LogID (PK)`  
+- `LoginID (PK)`  
 - `UserID (FK)`  
 - `Content_ID (FK)`  
 - Watched_Date  
@@ -157,7 +157,7 @@ CREATE TABLE Content (
 );
 
 CREATE TABLE ActivityLogs (
-    LogID INT PRIMARY KEY,
+    LoginID INT PRIMARY KEY,
     UserID INT,
     Content_ID INT,
     Watched_Date DATETIME,
