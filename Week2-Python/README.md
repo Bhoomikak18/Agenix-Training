@@ -65,7 +65,6 @@ The `sql_queries.sql` file contains useful queries for analyzing logs, such as:
 - Busiest hour of the day
 
 ## Notes
-- The `.env` files are ignored in Git using `.gitignore`.
 - Ensure PostgreSQL is running and accessible before executing scripts.
 
 ---
