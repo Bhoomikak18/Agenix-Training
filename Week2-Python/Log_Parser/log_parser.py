@@ -1,7 +1,9 @@
 import re
+import argparse
+import logging
 from database import Database  
 
-# Defining the log line format 
+# Define  
 LOG_PATTERN = r'(?P<ip>\d+\.\d+\.\d+\.\d+) - - \[(?P<timestamp>.*?)\] "(?P<method>\w+) (?P<url>.*?) HTTP/1\.[01]" (?P<status_code>\d+) (?P<bytes>\d+) "(?P<referrer>.*?)" "(?P<user_agent>.*?)"'
 
 class LogParser:
@@ -16,22 +18,36 @@ class LogParser:
 
     def parse_logs(self):
         logs = []
-        with open(self.file_path, 'r') as f:
-            for line in f:
-                parsed_line = self.parse_log_line(line)
-                if parsed_line:
-                    logs.append(parsed_line)
+        try:
+            with open(self.file_path, "r") as f:
+                for line in f:
+                    parsed_line = self.parse_log_line(line)
+                    if parsed_line:
+                        logs.append(parsed_line)
+            logging.info(f"Successfully parsed {len(logs)} log entries.")
+        except FileNotFoundError:
+            logging.error(f"File not found: {self.file_path}")
+        except Exception as e:
+            logging.error(f"Error while reading file: {e}")
         return logs
 
     def process_logs(self):
         parsed_logs = self.parse_logs()
-        # Insert 
-        db = Database()  
-        db.insert_log_data(parsed_logs)
+        if parsed_logs:
+            db = Database()
+            db.insert_log_data(parsed_logs)
+            logging.info("Logs successfully inserted into the database.")
+        else:
+            logging.warning("No logs were parsed. Nothing to insert.")
 
 if __name__ == "__main__":
-    # Path to the Apache logs file
-    log_file_path = "C:\\Users\\DELL\\Desktop\\Agenix\\Agenix-Training\\Week2-Python\\Log_Parser\\apache_logs.txt"
+    # Configure logging
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
-    log_parser = LogParser(log_file_path)
+    parser = argparse.ArgumentParser(description="Apache Log Parser")
+    parser.add_argument("log_file", type=str, help="Path to the Apache log file")
+    args = parser.parse_args()
+
+    # Initialize and process logs
+    log_parser = LogParser(args.log_file)
     log_parser.process_logs()
